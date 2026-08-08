@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 avian3d = { git = "https://github.com/avianphysics/avian", branch = "main", version = "0.8.0-dev" }
+bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", version = "0.20.0-dev" }
