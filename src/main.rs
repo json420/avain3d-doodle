@@ -1,6 +1,9 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
+const ACCELERATION: f32 = 30.0; // m/s^2
+const IMPULSE: f32 = 7.0; // m/s
+
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -14,6 +17,7 @@ fn setup(
     ));
 
     commands.spawn((
+        Player,
         RigidBody::Dynamic,
         Collider::capsule(0.4, 1.0),
         Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
@@ -70,6 +74,9 @@ fn setup(
     println!("done");
 }
 
+#[derive(Component)]
+struct Player;
+
 #[derive(Event, Debug)]
 enum Action {
     Move(Vec2),
@@ -94,13 +101,24 @@ fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
     }
 }
 
-fn handle_action(on: On<Action>) {
-    match on.event() {
-        Action::Move(direction) => {
-            println!("Action::Move({direction})");
-        }
-        Action::Jump => {
-            println!("Action::Jump");
+// If you flip the order of the fn args to (time, on), this doesn't work. Should it?
+fn handle_action(
+    on: On<Action>,
+    time: Res<Time>,
+    mut query: Query<(&Player, &mut LinearVelocity)>,
+) {
+    for (_player, mut linear_velocity) in &mut query {
+        match on.event() {
+            Action::Move(direction) => {
+                println!("Action::Move({direction})");
+                let dt = time.delta_secs();
+                linear_velocity.x += direction.x * ACCELERATION * dt;
+                linear_velocity.z += direction.y * ACCELERATION * dt;
+            }
+            Action::Jump => {
+                println!("Action::Jump");
+                linear_velocity.y = IMPULSE;
+            }
         }
     }
 }
