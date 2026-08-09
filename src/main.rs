@@ -26,8 +26,24 @@ fn setup(
         Collider::cuboid(1.0, 1.0, 1.0),
         AngularVelocity(Vec3::new(2.5, -11.5, 17.5)),
         Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-        MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
+        MeshMaterial3d(materials.add(Color::srgb_u8(240, 255, 124))),
         Transform::from_xyz(0.0, 8.0, 0.0),
+    ));
+    commands.spawn((
+        RigidBody::Dynamic,
+        Collider::cuboid(1.0, 1.0, 1.0),
+        AngularVelocity(Vec3::new(0.0, 42.0, 0.0)),
+        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+        MeshMaterial3d(materials.add(Color::srgb_u8(124, 255, 144))),
+        Transform::from_xyz(0.0, 12.0, 0.0),
+    ));
+    commands.spawn((
+        RigidBody::Dynamic,
+        Collider::cuboid(1.0, 1.0, 1.0),
+        AngularVelocity(Vec3::new(0.0, -69.0, 10.0)),
+        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+        MeshMaterial3d(materials.add(Color::srgb_u8(255, 144, 124))),
+        Transform::from_xyz(0.0, 16.0, 0.0),
     ));
 
     commands.spawn((
@@ -39,7 +55,7 @@ fn setup(
     ));
     commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(-2.5, 7.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
     println!("done");
 }
