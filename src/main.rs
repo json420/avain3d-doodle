@@ -18,7 +18,7 @@ fn setup(
         Collider::capsule(0.4, 1.0),
         Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-        Transform::from_xyz(2.0, 1.5, 0.5),
+        Transform::from_xyz(2.0, 2.5, 0.5),
     ));
 
     commands.spawn((
@@ -68,9 +68,28 @@ fn setup(
     println!("done");
 }
 
+fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>) {
+    let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]);
+    let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]);
+    let left = keyboard.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
+    let right = keyboard.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
+
+    let dx = right as i8 - left as i8;
+    let dy = up as i8 - down as i8;
+    let direction = Vec2::new(dx.into(), dy.into()).clamp_length_max(1.0);
+    if direction != Vec2::ZERO {
+        println!("{direction}");
+    }
+
+    if keyboard.just_pressed(KeyCode::Space) {
+        println!("Jump, yo!");
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
         .add_systems(Startup, setup)
+        .add_systems(Update, keyboard_input)
         .run();
 }
