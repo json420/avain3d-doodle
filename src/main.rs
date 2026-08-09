@@ -8,20 +8,27 @@ fn setup(
 ) {
     commands.spawn((
         RigidBody::Static,
-        Collider::cylinder(4.0, 0.1),
-        Mesh3d(meshes.add(Cylinder::new(4.0, 0.1))),
+        Collider::cylinder(400.0, 0.1),
+        Mesh3d(meshes.add(Cylinder::new(400.0, 0.1))),
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
     commands.spawn((
         RigidBody::Dynamic,
         Collider::cuboid(1.0, 1.0, 1.0),
-        AngularVelocity(Vec3::new(2.5, 3.5, 1.5)),
+        AngularVelocity(Vec3::new(5.5, 3.5, 1.5)),
         Mesh3d(meshes.add(Cuboid::from_length(1.0))),
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
         Transform::from_xyz(0.0, 4.0, 0.0),
     ));
-    commands.spawn((RigidBody::Static, Collider::cuboid(5.0, 0.5, 5.0)));
+    commands.spawn((
+        RigidBody::Dynamic,
+        Collider::cuboid(1.0, 1.0, 1.0),
+        AngularVelocity(Vec3::new(2.5, -11.5, 17.5)),
+        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+        MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
+        Transform::from_xyz(0.0, 8.0, 0.0),
+    ));
 
     commands.spawn((
         PointLight {
