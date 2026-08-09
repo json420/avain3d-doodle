@@ -21,11 +21,12 @@ fn setup(
         .spawn((
             Player,
             RigidBody::Dynamic,
-            Collider::capsule(0.4, 1.0),
-            Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
+            Collider::cuboid(1.0, 1.0, 1.0),
+            Mesh3d(meshes.add(Cuboid::from_length(1.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(2.0, 2.5, 0.75),
-            LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
+            LockedAxes::ROTATION_LOCKED,
+            GravityScale(2.0),
         ))
         .with_children(|parent| {
             parent.spawn((
