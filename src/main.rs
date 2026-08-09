@@ -30,7 +30,7 @@ fn setup(
         .with_children(|parent| {
             parent.spawn((
                 Camera3d::default(),
-                Transform::from_xyz(0.0, 2.0, -9.0).looking_at(Vec3::ZERO, Vec3::Y),
+                Transform::from_xyz(0.0, 2.0, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
             ));
         });
 
@@ -92,7 +92,7 @@ fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
     let right = keyboard.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
 
     let dx = right as i8 - left as i8;
-    let dy = up as i8 - down as i8;
+    let dy = down as i8 - up as i8; // Forward is negative Z
     let direction = Vec2::new(dx.into(), dy.into()).clamp_length_max(1.0);
     if direction != Vec2::ZERO {
         commands.trigger(Action::Move(direction));
