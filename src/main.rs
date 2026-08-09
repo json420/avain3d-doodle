@@ -15,6 +15,14 @@ fn setup(
 
     commands.spawn((
         RigidBody::Dynamic,
+        Collider::capsule(0.4, 1.0),
+        Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
+        MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+        Transform::from_xyz(2.0, 1.5, 0.5),
+    ));
+
+    commands.spawn((
+        RigidBody::Dynamic,
         Collider::cuboid(1.0, 1.0, 1.0),
         AngularVelocity(Vec3::new(5.5, 3.5, 1.5)),
         Mesh3d(meshes.add(Cuboid::from_length(1.0))),
@@ -55,7 +63,7 @@ fn setup(
     ));
     commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(-2.5, 7.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(-2.5, 1.9, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
     println!("done");
 }
