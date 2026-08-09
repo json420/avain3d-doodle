@@ -18,7 +18,7 @@ fn setup(
         Collider::capsule(0.4, 1.0),
         Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-        Transform::from_xyz(2.0, 2.5, 0.5),
+        Transform::from_xyz(2.0, 7.5, 0.75),
     ));
 
     commands.spawn((
@@ -84,18 +84,23 @@ fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
     let dy = up as i8 - down as i8;
     let direction = Vec2::new(dx.into(), dy.into()).clamp_length_max(1.0);
     if direction != Vec2::ZERO {
-        println!("{direction}");
         commands.trigger(Action::Move(direction));
     }
 
     if keyboard.just_pressed(KeyCode::Space) {
-        println!("Jump, yo!");
         commands.trigger(Action::Jump);
     }
 }
 
-fn handle_action(on_action: On<Action>) {
-    println!("handle_action: {on_action:?}");
+fn handle_action(on: On<Action>) {
+    match on.event() {
+        Action::Move(direction) => {
+            println!("Action::Move({direction})");
+        }
+        Action::Jump => {
+            println!("Action::Jump");
+        }
+    }
 }
 
 fn main() {
