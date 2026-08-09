@@ -27,6 +27,7 @@ fn setup(
             Transform::from_xyz(2.0, 2.5, 0.75),
             LockedAxes::ROTATION_LOCKED,
             GravityScale(2.0),
+            Friction::new(0.7),
         ))
         .with_children(|parent| {
             parent.spawn((
