@@ -16,6 +16,7 @@ fn setup(
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
+    // The player
     commands.spawn((
         Player,
         RigidBody::Dynamic,
@@ -23,6 +24,7 @@ fn setup(
         Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
         Transform::from_xyz(2.0, 2.5, 0.75),
+        LockedAxes::ROTATION_LOCKED,
     ));
 
     commands.spawn((
@@ -70,6 +72,7 @@ fn setup(
         Collider::capsule(0.4, 1.0),
         Camera3d::default(),
         Transform::from_xyz(0.0, 4.2, 9.0),
+        LockedAxes::ROTATION_LOCKED,
     ));
     println!("done");
 }
