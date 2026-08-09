@@ -7,3 +7,10 @@ edition = "2024"
 avian3d = { git = "https://github.com/avianphysics/avian.git", branch = "main", version = "0.8.0-dev" }
 bevy = "0.19.0"
 
+# Enable a small amount of optimization in the dev profile.
+[profile.dev]
+opt-level = 1
+
+# Enable a large amount of optimization in the dev profile for dependencies.
+[profile.dev.package."*"]
+opt-level = 3
