@@ -371,9 +371,8 @@ dependencies = [
 
 [[package]]
 name = "avian3d"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35a30cb730c72527ffaca7f8806881c7e4acc70a4a74c54eb1ffb56c27f64235"
+version = "0.8.0-dev"
+source = "git+https://github.com/avianphysics/avian.git?branch=main#af25f3f6d3442f4cf50023c366f0300c78cc5913"
 dependencies = [
  "approx",
  "avian_derive",
@@ -397,8 +396,7 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b95522267606c85f77ba40b55735583618f7a48e873be71a934f71dd5519ce86"
+source = "git+https://github.com/avianphysics/avian.git?branch=main#af25f3f6d3442f4cf50023c366f0300c78cc5913"
 dependencies = [
  "proc-macro-error3",
  "proc-macro2",
