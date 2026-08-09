@@ -68,7 +68,13 @@ fn setup(
     println!("done");
 }
 
-fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>) {
+#[derive(Event, Debug)]
+enum Action {
+    Move(Vec2),
+    Jump,
+}
+
+fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
     let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]);
     let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]);
     let left = keyboard.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
@@ -79,11 +85,17 @@ fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>) {
     let direction = Vec2::new(dx.into(), dy.into()).clamp_length_max(1.0);
     if direction != Vec2::ZERO {
         println!("{direction}");
+        commands.trigger(Action::Move(direction));
     }
 
     if keyboard.just_pressed(KeyCode::Space) {
         println!("Jump, yo!");
+        commands.trigger(Action::Jump);
     }
+}
+
+fn handle_action(on_action: On<Action>) {
+    println!("handle_action: {on_action:?}");
 }
 
 fn main() {
@@ -91,5 +103,6 @@ fn main() {
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
         .add_systems(Startup, setup)
         .add_systems(Update, keyboard_input)
+        .add_observer(handle_action)
         .run();
 }
