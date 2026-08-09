@@ -1,24 +1,38 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-fn setup(mut commands: Commands) {
+fn setup(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    commands.spawn((
+        RigidBody::Static,
+        Collider::cylinder(4.0, 0.1),
+        Mesh3d(meshes.add(Cylinder::new(4.0, 0.1))),
+        MeshMaterial3d(materials.add(Color::WHITE)),
+    ));
+
     commands.spawn((
         RigidBody::Dynamic,
-        Collider::sphere(0.5),
-        ColliderDensity(2.0),
-        Transform::from_xyz(0.0, 2.0, 0.0),
+        Collider::cuboid(1.0, 1.0, 1.0),
+        AngularVelocity(Vec3::new(2.5, 3.5, 1.5)),
+        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+        MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
+        Transform::from_xyz(0.0, 4.0, 0.0),
     ));
     commands.spawn((RigidBody::Static, Collider::cuboid(5.0, 0.5, 5.0)));
+
     commands.spawn((
-        DirectionalLight {
-            illuminance: 5000.0,
+        PointLight {
+            shadow_maps_enabled: true,
             ..default()
         },
-        Transform::default().looking_at(Vec3::new(-1.0, -2.5, -1.5), Vec3::Y),
+        Transform::from_xyz(4.0, 8.0, 4.0),
     ));
     commands.spawn((
         Camera3d::default(),
-        Transform::from_translation(Vec3::new(20.0, 10.0, 20.0)).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(-2.5, 4.5, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
     ));
     println!("done");
 }
