@@ -18,7 +18,7 @@ fn setup(
         Collider::capsule(0.4, 1.0),
         Mesh3d(meshes.add(Capsule3d::new(0.4, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-        Transform::from_xyz(2.0, 7.5, 0.75),
+        Transform::from_xyz(2.0, 2.5, 0.75),
     ));
 
     commands.spawn((
@@ -62,8 +62,10 @@ fn setup(
         Transform::from_xyz(4.0, 8.0, 4.0),
     ));
     commands.spawn((
+        RigidBody::Dynamic,
+        Collider::capsule(0.4, 1.0),
         Camera3d::default(),
-        Transform::from_xyz(-2.5, 1.9, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(0.0, 4.2, 9.0),
     ));
     println!("done");
 }
