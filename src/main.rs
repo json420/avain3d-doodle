@@ -3,8 +3,8 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_ACCELERATION: f32 = 17.0; // radians/s^2
-const MAX_SPEED: f32 = 15.0; // m/s
+const ANGULAR_ACCELERATION: f32 = 11.0; // radians/s^2
+const MAX_SPEED: f32 = 20.0; // m/s
 const MAX_ANGULAR_VELOCITY: f32 = 5.0; // radians/s
 
 fn setup(
@@ -30,7 +30,7 @@ fn setup(
             Transform::from_xyz(2.0, 2.5, 0.75),
             LockedAxes::ROTATION_LOCKED,
             GravityScale(2.0),
-            Friction::new(0.7),
+            Friction::new(0.9),
             MaxLinearSpeed(MAX_SPEED),
         ))
         .with_children(|parent| {
@@ -92,8 +92,8 @@ fn update_player(
     )>,
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
-        println!("{:?}", input);
-        println!("{} {}", linear_velocity.length(), angular_velocity.y);
+        //println!("{:?}", input);
+        //println!("{} {}", linear_velocity.length(), angular_velocity.y);
         let dt = time.delta_secs();
         if input.throttle != 0.0 {
             let delta_v = -transform.local_z() * input.throttle * ACCELERATION * dt;
