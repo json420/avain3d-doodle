@@ -4,6 +4,7 @@ use bevy::prelude::*;
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
 const ANGULAR_VELOCITY: f32 = 2.0; // radians/s
+const MAX_SPEED: f32 = 15.0; // m/s
 
 fn setup(
     mut commands: Commands,
@@ -29,6 +30,7 @@ fn setup(
             LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
             GravityScale(2.0),
             Friction::new(0.7),
+            MaxLinearSpeed(MAX_SPEED),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -89,7 +91,7 @@ fn update_player(
     )>,
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
-        println!("{input:?}");
+        println!("{}", linear_velocity.length());
         if input.throttle != 0.0 {
             let delta_v = -transform.local_z() * input.throttle * ACCELERATION * time.delta_secs();
             linear_velocity.x += delta_v.x;
