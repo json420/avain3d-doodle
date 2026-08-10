@@ -44,30 +44,6 @@ fn setup(
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
         Transform::from_xyz(0.0, 4.0, 0.0),
     ));
-    commands.spawn((
-        RigidBody::Dynamic,
-        Collider::cuboid(1.0, 1.0, 1.0),
-        AngularVelocity(Vec3::new(2.5, -11.5, 17.5)),
-        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-        MeshMaterial3d(materials.add(Color::srgb_u8(240, 255, 124))),
-        Transform::from_xyz(0.0, 8.0, 0.0),
-    ));
-    commands.spawn((
-        RigidBody::Dynamic,
-        Collider::cuboid(1.0, 1.0, 1.0),
-        AngularVelocity(Vec3::new(0.0, 42.0, 0.0)),
-        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-        MeshMaterial3d(materials.add(Color::srgb_u8(124, 255, 144))),
-        Transform::from_xyz(0.0, 12.0, 0.0),
-    ));
-    commands.spawn((
-        RigidBody::Dynamic,
-        Collider::cuboid(1.0, 1.0, 1.0),
-        AngularVelocity(Vec3::new(0.0, -69.0, 10.0)),
-        Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-        MeshMaterial3d(materials.add(Color::srgb_u8(255, 144, 124))),
-        Transform::from_xyz(0.0, 16.0, 0.0),
-    ));
 
     commands.spawn((
         PointLight {
