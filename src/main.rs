@@ -3,9 +3,10 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_ACCELERATION: f32 = 11.0; // radians/s^2
+const ANGULAR_ACCELERATION: f32 = 9.0; // radians/s^2
 const MAX_SPEED: f32 = 20.0; // m/s
 const MAX_ANGULAR_VELOCITY: f32 = 5.0; // radians/s
+const USER: f32 = 1.2;
 
 fn setup(
     mut commands: Commands,
@@ -33,14 +34,14 @@ fn setup(
         }
     }
 
-    for i in -2..2 {
-        for j in -2..2 {
+    for i in -1..2 {
+        for j in -1..2 {
             commands.spawn((
                 PointLight {
                     shadow_maps_enabled: true,
                     ..default()
                 },
-                Transform::from_xyz(i as f32 * 50.0, 8.0, j as f32 * 50.0),
+                Transform::from_xyz(i as f32 * 50.0, 10.0, j as f32 * 50.0),
             ));
         }
     }
@@ -50,14 +51,14 @@ fn setup(
         .spawn((
             Player,
             RigidBody::Dynamic,
-            Collider::cuboid(1.0, 1.0, 1.0),
+            Collider::cuboid(USER, USER, USER),
             ColliderDensity(4.0),
-            Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+            Mesh3d(meshes.add(Cuboid::from_length(USER))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(0.0, 11.0, 0.0),
             LockedAxes::ROTATION_LOCKED,
-            Friction::new(0.9),
             MaxLinearSpeed(MAX_SPEED),
+            LinearDamping(0.4),
         ))
         .with_children(|parent| {
             parent.spawn((
@@ -102,7 +103,7 @@ fn update_player(
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
         //println!("{:?}", input);
-        println!("{} {}", linear_velocity.length(), angular_velocity.y);
+        println!("{}", linear_velocity.length());
         let dt = time.delta_secs();
         if input.throttle == 0.0 {
             linear_velocity.x *= 0.9;
