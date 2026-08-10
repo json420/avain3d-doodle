@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_VELOCITY: f32 = 3.0; // radians/s
+const ANGULAR_VELOCITY: f32 = 2.0; // radians/s
 
 fn setup(
     mut commands: Commands,
@@ -66,12 +66,6 @@ struct PlayerInput {
     jump: bool,
 }
 
-#[derive(Event, Debug)]
-enum Action {
-    Move(Vec2),
-    Jump,
-}
-
 fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerInput>) {
     let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]) as i8;
     let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]) as i8;
@@ -84,41 +78,9 @@ fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerI
     }
 }
 
-// If you flip the order of the fn args to (time, on), this doesn't work. Should it?
-fn handle_action(
-    on: On<Action>,
-    time: Res<Time>,
-    mut query: Query<(
-        &Player,
-        &Transform,
-        &mut LinearVelocity,
-        &mut AngularVelocity,
-    )>,
-) {
-    for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
-        match on.event() {
-            Action::Move(direction) => {
-                println!("Action::Move({direction})");
-                let factor = ACCELERATION * time.delta_secs();
-
-                let dv = transform.local_z() * (direction.y * factor);
-                linear_velocity.x += dv.x;
-                linear_velocity.z += dv.z;
-                if direction.x != 0.0 {
-                    angular_velocity.y = direction.x * -3.0;
-                }
-            }
-            Action::Jump => {
-                println!("Action::Jump");
-                linear_velocity.y = IMPULSE;
-            }
-        }
-    }
-}
-
 fn update_player(
-    input: Res<PlayerInput>,
     time: Res<Time>,
+    mut input: ResMut<PlayerInput>,
     mut query: Query<(
         &Player,
         &Transform,
@@ -133,7 +95,11 @@ fn update_player(
             linear_velocity.x += delta_v.x;
             linear_velocity.z += delta_v.z;
         }
-        angular_velocity.y = input.steering * ANGULAR_VELOCITY;
+        angular_velocity.y = -input.steering * ANGULAR_VELOCITY;
+        if input.jump {
+            input.jump = false; // Clear the jump command
+            linear_velocity.y = IMPULSE;
+        }
     }
 }
 
@@ -147,6 +113,5 @@ fn main() {
         })
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_input, update_player).chain())
-        .add_observer(handle_action)
         .run();
 }
