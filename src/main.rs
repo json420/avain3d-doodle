@@ -95,7 +95,7 @@ fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
 
     let dx = right as i8 - left as i8;
     let dy = down as i8 - up as i8; // Forward is negative Z
-    let direction = Vec2::new(dx.into(), dy.into()).clamp_length_max(1.0);
+    let direction = Vec2::new(dx.into(), dy.into());
     if direction != Vec2::ZERO {
         commands.trigger(Action::Move(direction));
     }
@@ -122,11 +122,10 @@ fn handle_action(
                 println!("Action::Move({direction})");
                 let factor = ACCELERATION * time.delta_secs();
 
-                let dv = transform.local_x() * (direction.x * factor * 0.25)
-                    + transform.local_z() * (direction.y * factor);
+                let dv = transform.local_z() * (direction.y * factor);
                 linear_velocity.x += dv.x;
                 linear_velocity.z += dv.z;
-                angular_velocity.y = direction.x * -4.0;
+                angular_velocity.y = direction.x * -3.0;
             }
             Action::Jump => {
                 println!("Action::Jump");
