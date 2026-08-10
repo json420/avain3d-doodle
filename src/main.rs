@@ -19,36 +19,19 @@ fn setup(
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
-    // The player
-    commands
-        .spawn((
-            Player,
-            RigidBody::Dynamic,
-            Collider::cuboid(1.0, 1.0, 1.0),
-            Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-            MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-            Transform::from_xyz(0.0, 5.0, 0.0),
-            LockedAxes::ROTATION_LOCKED,
-            GravityScale(2.0),
-            Friction::new(0.9),
-            MaxLinearSpeed(MAX_SPEED),
-        ))
-        .with_children(|parent| {
-            parent.spawn((
-                Camera3d::default(),
-                Transform::from_xyz(0.0, 2.0, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
-            ));
-        });
-
-    for i in -10..10 {
-        for j in -10..10 {
+    for i in -5..5_i32 {
+        for j in -5..5_i32 {
             commands.spawn((
                 RigidBody::Dynamic,
                 Collider::cuboid(1.0, 1.0, 1.0),
                 AngularVelocity(Vec3::new(5.5, 3.5, 1.5)),
                 Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                 MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
-                Transform::from_xyz(i as f32 * 5.0, 10.0, j as f32 * 1.5),
+                Transform::from_xyz(
+                    i as f32 * 2.5,
+                    30.0 + (i.abs() + j.abs()) as f32 * 2.0,
+                    j as f32 * 2.5,
+                ),
             ));
         }
     }
@@ -65,13 +48,26 @@ fn setup(
         }
     }
 
-    commands.spawn((
-        PointLight {
-            shadow_maps_enabled: true,
-            ..default()
-        },
-        Transform::from_xyz(0.0, 8.0, 4.0),
-    ));
+    // The player
+    commands
+        .spawn((
+            Player,
+            RigidBody::Dynamic,
+            Collider::cuboid(1.0, 1.0, 1.0),
+            Mesh3d(meshes.add(Cuboid::from_length(1.0))),
+            MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+            Transform::from_xyz(0.0, 10.0, 0.0),
+            LockedAxes::ROTATION_LOCKED,
+            GravityScale(2.0),
+            Friction::new(0.9),
+            MaxLinearSpeed(MAX_SPEED),
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                Camera3d::default(),
+                Transform::from_xyz(0.0, 2.0, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+            ));
+        });
 }
 
 #[derive(Component)]
