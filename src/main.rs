@@ -52,7 +52,6 @@ fn setup(
             RigidBody::Dynamic,
             Collider::cuboid(1.0, 1.0, 1.0),
             ColliderDensity(4.0),
-            LinearDamping(0.8),
             Mesh3d(meshes.add(Cuboid::from_length(1.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(0.0, 11.0, 0.0),
@@ -105,7 +104,10 @@ fn update_player(
         //println!("{:?}", input);
         println!("{} {}", linear_velocity.length(), angular_velocity.y);
         let dt = time.delta_secs();
-        if input.throttle != 0.0 {
+        if input.throttle == 0.0 {
+            linear_velocity.x *= 0.9;
+            linear_velocity.z *= 0.9;
+        } else {
             let delta_v = -transform.local_z() * input.throttle * ACCELERATION * dt;
             linear_velocity.x += delta_v.x;
             linear_velocity.z += delta_v.z;
