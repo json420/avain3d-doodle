@@ -1,7 +1,7 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-const ACCELERATION: f32 = 42.0; // m/s^2
+const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
 const ANGULAR_ACCELERATION: f32 = 11.0; // radians/s^2
 const MAX_SPEED: f32 = 20.0; // m/s
@@ -14,20 +14,20 @@ fn setup(
 ) {
     commands.spawn((
         RigidBody::Static,
-        Collider::cylinder(400.0, 0.1),
+        Collider::cylinder(200.0, 0.1),
         Mesh3d(meshes.add(Cylinder::new(400.0, 0.1))),
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
-    for i in -4..5_i32 {
-        for j in -4..5_i32 {
+    for i in -2..3_i32 {
+        for j in -2..3_i32 {
             for k in 0..4 {
                 commands.spawn((
                     RigidBody::Dynamic,
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
-                    Transform::from_xyz(i as f32 * 3.5, 5.0 + k as f32 * 1.1, j as f32 * 3.5),
+                    Transform::from_xyz(i as f32 * 7.5, 1.0 + k as f32 * 1.1, j as f32 * 7.5),
                 ));
             }
         }
@@ -51,7 +51,8 @@ fn setup(
             Player,
             RigidBody::Dynamic,
             Collider::cuboid(1.0, 1.0, 1.0),
-            ColliderDensity(10.0),
+            ColliderDensity(4.0),
+            LinearDamping(0.8),
             Mesh3d(meshes.add(Cuboid::from_length(1.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(0.0, 11.0, 0.0),
@@ -102,7 +103,7 @@ fn update_player(
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
         //println!("{:?}", input);
-        //println!("{} {}", linear_velocity.length(), angular_velocity.y);
+        println!("{} {}", linear_velocity.length(), angular_velocity.y);
         let dt = time.delta_secs();
         if input.throttle != 0.0 {
             let delta_v = -transform.local_z() * input.throttle * ACCELERATION * dt;
