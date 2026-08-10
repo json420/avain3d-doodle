@@ -3,6 +3,7 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
+const ANGULAR_VELOCITY: f32 = 3.0; // radians/s
 
 fn setup(
     mut commands: Commands,
@@ -57,27 +58,29 @@ fn setup(
 #[derive(Component)]
 struct Player;
 
+#[derive(Resource, Deref, DerefMut, Debug)]
+struct PlayerInput {
+    #[deref]
+    throttle: f32,
+    steering: f32,
+    jump: bool,
+}
+
 #[derive(Event, Debug)]
 enum Action {
     Move(Vec2),
     Jump,
 }
 
-fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
-    let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]);
-    let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]);
-    let left = keyboard.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
-    let right = keyboard.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
-
-    let dx = right as i8 - left as i8;
-    let dy = down as i8 - up as i8; // Forward is negative Z
-    let direction = Vec2::new(dx.into(), dy.into());
-    if direction != Vec2::ZERO {
-        commands.trigger(Action::Move(direction));
-    }
-
+fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerInput>) {
+    let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]) as i8;
+    let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]) as i8;
+    let left = keyboard.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]) as i8;
+    let right = keyboard.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]) as i8;
+    input.throttle = (up - down).into();
+    input.steering = (right - left).into();
     if keyboard.just_pressed(KeyCode::Space) {
-        commands.trigger(Action::Jump);
+        input.jump = true;
     }
 }
 
@@ -113,11 +116,37 @@ fn handle_action(
     }
 }
 
+fn update_player(
+    input: Res<PlayerInput>,
+    time: Res<Time>,
+    mut query: Query<(
+        &Player,
+        &Transform,
+        &mut LinearVelocity,
+        &mut AngularVelocity,
+    )>,
+) {
+    for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
+        println!("{input:?}");
+        if input.throttle != 0.0 {
+            let delta_v = -transform.local_z() * input.throttle * ACCELERATION * time.delta_secs();
+            linear_velocity.x += delta_v.x;
+            linear_velocity.z += delta_v.z;
+        }
+        angular_velocity.y = input.steering * ANGULAR_VELOCITY;
+    }
+}
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
+        .insert_resource(PlayerInput {
+            throttle: 0.0,
+            steering: 0.0,
+            jump: false,
+        })
         .add_systems(Startup, setup)
-        .add_systems(Update, keyboard_input)
+        .add_systems(Update, (keyboard_input, update_player).chain())
         .add_observer(handle_action)
         .run();
 }
