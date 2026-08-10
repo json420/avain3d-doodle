@@ -3,8 +3,9 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_VELOCITY: f32 = 2.0; // radians/s
+const ANGULAR_ACCELERATION: f32 = 17.0; // radians/s^2
 const MAX_SPEED: f32 = 15.0; // m/s
+const MAX_ANGULAR_VELOCITY: f32 = 5.0; // radians/s
 
 fn setup(
     mut commands: Commands,
@@ -27,7 +28,7 @@ fn setup(
             Mesh3d(meshes.add(Cuboid::from_length(1.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(2.0, 2.5, 0.75),
-            LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
+            LockedAxes::ROTATION_LOCKED,
             GravityScale(2.0),
             Friction::new(0.7),
             MaxLinearSpeed(MAX_SPEED),
@@ -91,13 +92,24 @@ fn update_player(
     )>,
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
-        println!("{}", linear_velocity.length());
+        println!("{:?}", input);
+        println!("{} {}", linear_velocity.length(), angular_velocity.y);
+        let dt = time.delta_secs();
         if input.throttle != 0.0 {
-            let delta_v = -transform.local_z() * input.throttle * ACCELERATION * time.delta_secs();
+            let delta_v = -transform.local_z() * input.throttle * ACCELERATION * dt;
             linear_velocity.x += delta_v.x;
             linear_velocity.z += delta_v.z;
         }
-        angular_velocity.y = -input.steering * ANGULAR_VELOCITY;
+
+        if input.steering == 0.0 {
+            angular_velocity.y *= 0.7;
+        } else {
+            angular_velocity.y += -input.steering * ANGULAR_ACCELERATION * dt;
+            angular_velocity.y = angular_velocity
+                .y
+                .clamp(-MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
+        }
+
         if input.jump {
             input.jump = false; // Clear the jump command
             linear_velocity.y = IMPULSE;
