@@ -101,7 +101,9 @@ fn handle_action(
                 let dv = transform.local_z() * (direction.y * factor);
                 linear_velocity.x += dv.x;
                 linear_velocity.z += dv.z;
-                angular_velocity.y = direction.x * -3.0;
+                if direction.x != 0.0 {
+                    angular_velocity.y = direction.x * -3.0;
+                }
             }
             Action::Jump => {
                 println!("Action::Jump");
