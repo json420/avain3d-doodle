@@ -25,7 +25,7 @@ fn setup(
             Mesh3d(meshes.add(Cuboid::from_length(1.0))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(2.0, 2.5, 0.75),
-            LockedAxes::ROTATION_LOCKED,
+            LockedAxes::ROTATION_LOCKED.unlock_rotation_y(),
             GravityScale(2.0),
             Friction::new(0.7),
         ))
@@ -109,15 +109,24 @@ fn keyboard_input(mut commands: Commands, keyboard: Res<ButtonInput<KeyCode>>) {
 fn handle_action(
     on: On<Action>,
     time: Res<Time>,
-    mut query: Query<(&Player, &mut LinearVelocity)>,
+    mut query: Query<(
+        &Player,
+        &Transform,
+        &mut LinearVelocity,
+        &mut AngularVelocity,
+    )>,
 ) {
-    for (_player, mut linear_velocity) in &mut query {
+    for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
         match on.event() {
             Action::Move(direction) => {
                 println!("Action::Move({direction})");
-                let dt = time.delta_secs();
-                linear_velocity.x += direction.x * ACCELERATION * dt;
-                linear_velocity.z += direction.y * ACCELERATION * dt;
+                let factor = ACCELERATION * time.delta_secs();
+
+                let dv = transform.local_x() * (direction.x * factor * 0.25)
+                    + transform.local_z() * (direction.y * factor);
+                linear_velocity.x += dv.x;
+                linear_velocity.z += dv.z;
+                angular_velocity.y = direction.x * -4.0;
             }
             Action::Jump => {
                 println!("Action::Jump");
