@@ -25,10 +25,14 @@ fn setup(
         Color::srgb_u8(240, 255, 124),
         Color::srgb_u8(124, 255, 144),
         Color::srgb_u8(255, 144, 124),
+        Color::srgb_u8(124, 144, 255),
+        Color::srgb_u8(240, 255, 124),
+        Color::srgb_u8(124, 255, 144),
+        Color::srgb_u8(255, 144, 124),
     ];
     for i in -2..3_i32 {
         for j in -2..3_i32 {
-            for k in 0..4 {
+            for k in 0..8 {
                 commands.spawn((
                     RigidBody::Dynamic,
                     Collider::cuboid(1.0, 1.0, 1.0),
@@ -61,7 +65,7 @@ fn setup(
             ColliderDensity(4.0),
             Mesh3d(meshes.add(Cuboid::from_length(USER))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-            Transform::from_xyz(0.0, 11.0, 0.0),
+            Transform::from_xyz(0.0, 13.0, 0.0),
             LockedAxes::ROTATION_LOCKED,
             MaxLinearSpeed(MAX_SPEED),
             LinearDamping(0.4),
