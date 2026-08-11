@@ -3,10 +3,10 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_ACCELERATION: f32 = 9.0; // radians/s^2
+const ANGULAR_ACCELERATION: f32 = 7.0; // radians/s^2
 const MAX_SPEED: f32 = 20.0; // m/s
-const MAX_ANGULAR_VELOCITY: f32 = 5.0; // radians/s
-const USER: f32 = 1.2;
+const MAX_ANGULAR_VELOCITY: f32 = 3.0; // radians/s
+const USER: f32 = 1.3;
 
 fn setup(
     mut commands: Commands,
@@ -34,7 +34,7 @@ fn setup(
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(colors[k])),
-                    Transform::from_xyz(i as f32 * 7.5, 1.0 + k as f32 * 1.1, j as f32 * 7.5),
+                    Transform::from_xyz(i as f32 * 10.0, 1.0 + k as f32 * 1.1, j as f32 * 10.0),
                 ));
             }
         }
@@ -47,7 +47,7 @@ fn setup(
                     shadow_maps_enabled: true,
                     ..default()
                 },
-                Transform::from_xyz(i as f32 * 50.0, 10.0, j as f32 * 50.0),
+                Transform::from_xyz(i as f32 * 30.0, 10.0, j as f32 * 30.0),
             ));
         }
     }
