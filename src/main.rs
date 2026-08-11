@@ -20,6 +20,12 @@ fn setup(
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
+    let colors = [
+        Color::srgb_u8(124, 144, 255),
+        Color::srgb_u8(240, 255, 124),
+        Color::srgb_u8(124, 255, 144),
+        Color::srgb_u8(255, 144, 124),
+    ];
     for i in -2..3_i32 {
         for j in -2..3_i32 {
             for k in 0..4 {
@@ -27,7 +33,7 @@ fn setup(
                     RigidBody::Dynamic,
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-                    MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
+                    MeshMaterial3d(materials.add(colors[k])),
                     Transform::from_xyz(i as f32 * 7.5, 1.0 + k as f32 * 1.1, j as f32 * 7.5),
                 ));
             }
@@ -102,8 +108,6 @@ fn update_player(
     )>,
 ) {
     for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
-        //println!("{:?}", input);
-        println!("{}", linear_velocity.length());
         let dt = time.delta_secs();
         if input.throttle == 0.0 {
             linear_velocity.x *= 0.9;
