@@ -3,9 +3,9 @@ use bevy::prelude::*;
 
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
-const ANGULAR_ACCELERATION: f32 = 7.0; // radians/s^2
+const ANGULAR_ACCELERATION: f32 = 6.5; // radians/s^2
 const MAX_SPEED: f32 = 30.0; // m/s
-const MAX_ANGULAR_VELOCITY: f32 = 3.0; // radians/s
+const MAX_ANGULAR_VELOCITY: f32 = 2.5; // radians/s
 const USER: f32 = 1.3;
 
 fn setup(
@@ -38,7 +38,7 @@ fn setup(
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(colors[k])),
-                    Transform::from_xyz(i as f32 * 10.0, 1.0 + k as f32 * 1.1, j as f32 * 10.0),
+                    Transform::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.1, j as f32 * 8.0),
                 ));
             }
         }
@@ -73,7 +73,7 @@ fn setup(
         .with_children(|parent| {
             parent.spawn((
                 Camera3d::default(),
-                Transform::from_xyz(0.0, 2.0, 9.0).looking_at(Vec3::ZERO, Vec3::Y),
+                Transform::from_xyz(0.0, 3.0, 13.0).looking_at(Vec3::ZERO, Vec3::Y),
             ));
         });
 }
