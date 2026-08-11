@@ -4,7 +4,7 @@ use bevy::prelude::*;
 const ACCELERATION: f32 = 30.0; // m/s^2
 const IMPULSE: f32 = 7.0; // m/s
 const ANGULAR_ACCELERATION: f32 = 7.0; // radians/s^2
-const MAX_SPEED: f32 = 20.0; // m/s
+const MAX_SPEED: f32 = 30.0; // m/s
 const MAX_ANGULAR_VELOCITY: f32 = 3.0; // radians/s
 const USER: f32 = 1.3;
 
@@ -16,7 +16,7 @@ fn setup(
     commands.spawn((
         RigidBody::Static,
         Collider::cylinder(200.0, 0.1),
-        Mesh3d(meshes.add(Cylinder::new(400.0, 0.1))),
+        Mesh3d(meshes.add(Cylinder::new(200.0, 0.1))),
         MeshMaterial3d(materials.add(Color::WHITE)),
     ));
 
