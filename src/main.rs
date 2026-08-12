@@ -1,12 +1,25 @@
 use avian3d::prelude::*;
 use bevy::prelude::*;
 
-const ACCELERATION: f32 = 30.0; // m/s^2
-const IMPULSE: f32 = 7.0; // m/s
+const LINEAR_ACCELERATION: f32 = 30.0; // m/s^2
+const MAX_LINEAR_SPEED: f32 = 30.0; // m/s
 const ANGULAR_ACCELERATION: f32 = 6.5; // radians/s^2
-const MAX_SPEED: f32 = 30.0; // m/s
-const MAX_ANGULAR_VELOCITY: f32 = 2.5; // radians/s
-const USER: f32 = 1.3;
+const MAX_ANGULAR_SPEED: f32 = 2.5; // radians/s
+const JUMP_IMPULSE: f32 = 7.0; // m/s
+const USER: f32 = 1.3; // m [Size of the player block]
+
+fn main() {
+    App::new()
+        .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
+        .insert_resource(PlayerInput {
+            throttle: 0.0,
+            steering: 0.0,
+            jump: false,
+        })
+        .add_systems(Startup, setup)
+        .add_systems(Update, (keyboard_input, update_player).chain())
+        .run();
+}
 
 fn setup(
     mut commands: Commands,
@@ -67,7 +80,7 @@ fn setup(
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
             Transform::from_xyz(0.0, 13.0, 0.0),
             LockedAxes::ROTATION_LOCKED,
-            MaxLinearSpeed(MAX_SPEED),
+            MaxLinearSpeed(MAX_LINEAR_SPEED),
             LinearDamping(0.5),
         ))
         .with_children(|parent| {
@@ -117,7 +130,7 @@ fn update_player(
             linear_velocity.x *= 0.9;
             linear_velocity.z *= 0.9;
         } else {
-            let delta_v = -transform.local_z() * input.throttle * ACCELERATION * dt;
+            let delta_v = -transform.local_z() * input.throttle * LINEAR_ACCELERATION * dt;
             linear_velocity.x += delta_v.x;
             linear_velocity.z += delta_v.z;
         }
@@ -128,25 +141,12 @@ fn update_player(
             angular_velocity.y += -input.steering * ANGULAR_ACCELERATION * dt;
             angular_velocity.y = angular_velocity
                 .y
-                .clamp(-MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
+                .clamp(-MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED);
         }
 
         if input.jump {
             input.jump = false; // Clear the jump command
-            linear_velocity.y = IMPULSE;
+            linear_velocity.y = JUMP_IMPULSE;
         }
     }
-}
-
-fn main() {
-    App::new()
-        .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
-        .insert_resource(PlayerInput {
-            throttle: 0.0,
-            steering: 0.0,
-            jump: false,
-        })
-        .add_systems(Startup, setup)
-        .add_systems(Update, (keyboard_input, update_player).chain())
-        .run();
 }
