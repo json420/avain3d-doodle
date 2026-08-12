@@ -18,7 +18,6 @@ fn setup(
         Collider::cylinder(200.0, 0.1),
         Mesh3d(meshes.add(Cylinder::new(200.0, 0.1))),
         MeshMaterial3d(materials.add(Color::WHITE)),
-        Restitution::new(0.5),
     ));
 
     let colors = [
@@ -40,7 +39,6 @@ fn setup(
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(colors[k])),
                     Transform::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.05, j as f32 * 8.0),
-                    Restitution::new(0.5),
                 ));
             }
         }
@@ -71,7 +69,6 @@ fn setup(
             LockedAxes::ROTATION_LOCKED,
             MaxLinearSpeed(MAX_SPEED),
             LinearDamping(0.5),
-            Restitution::new(0.3),
         ))
         .with_children(|parent| {
             parent.spawn((
