@@ -8,6 +8,17 @@ const MAX_ANGULAR_SPEED: f32 = 2.5; // radians/s
 const JUMP_IMPULSE: f32 = 7.0; // m/s
 const USER: f32 = 1.3; // m [Size of the player block]
 
+#[derive(Component)]
+struct Player;
+
+#[derive(Resource, Deref, DerefMut, Debug)]
+struct PlayerInput {
+    #[deref]
+    throttle: f32,
+    steering: f32,
+    jump: bool,
+}
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
@@ -89,17 +100,6 @@ fn setup(
                 Transform::from_xyz(0.0, 3.0, 13.0).looking_at(Vec3::ZERO, Vec3::Y),
             ));
         });
-}
-
-#[derive(Component)]
-struct Player;
-
-#[derive(Resource, Deref, DerefMut, Debug)]
-struct PlayerInput {
-    #[deref]
-    throttle: f32,
-    steering: f32,
-    jump: bool,
 }
 
 fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerInput>) {
