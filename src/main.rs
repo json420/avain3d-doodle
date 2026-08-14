@@ -8,6 +8,22 @@ const MAX_ANGULAR_SPEED: f32 = 2.5; // radians/s
 const JUMP_IMPULSE: f32 = 7.0; // m/s
 const USER: f32 = 1.3; // m [Size of the player block]
 
+#[derive(Component, Deref)]
+struct Resetable {
+    origin: Vec3,
+}
+
+impl Resetable {
+    fn from_xyz(x: f32, y: f32, z: f32) -> (Self, Transform) {
+        (
+            Resetable {
+                origin: Vec3::new(x, y, z),
+            },
+            Transform::from_xyz(x, y, z),
+        )
+    }
+}
+
 #[derive(Component)]
 struct Player;
 
@@ -17,10 +33,8 @@ struct PlayerInput {
     throttle: f32,
     steering: f32,
     jump: bool,
+    reset: bool,
 }
-
-#[derive(Event)]
-struct ResetWorld;
 
 fn main() {
     App::new()
@@ -29,10 +43,10 @@ fn main() {
             throttle: 0.0,
             steering: 0.0,
             jump: false,
+            reset: false,
         })
         .add_systems(Startup, setup)
-        .add_systems(Update, (keyboard_input, update_player).chain())
-        .add_observer(reset_world)
+        .add_systems(Update, (keyboard_input, update_player, reset_world).chain())
         .run();
 }
 
@@ -66,7 +80,7 @@ fn setup(
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(colors[k])),
-                    Transform::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.05, j as f32 * 8.0),
+                    Resetable::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.05, j as f32 * 8.0),
                 ));
             }
         }
@@ -93,7 +107,7 @@ fn setup(
             ColliderDensity(4.0),
             Mesh3d(meshes.add(Cuboid::from_length(USER))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-            Transform::from_xyz(0.0, 13.0, 0.0),
+            Resetable::from_xyz(0.0, 13.0, 0.0),
             LockedAxes::ROTATION_LOCKED,
             MaxLinearSpeed(MAX_LINEAR_SPEED),
             LinearDamping(0.5),
@@ -115,6 +129,9 @@ fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerI
     input.steering = (right - left).into();
     if keyboard.just_pressed(KeyCode::Space) {
         input.jump = true;
+    }
+    if keyboard.just_pressed(KeyCode::KeyR) {
+        input.reset = true;
     }
 }
 
@@ -155,13 +172,36 @@ fn update_player(
 
         if transform.translation.y < -10.0 {
             println!("fell off world");
-            transform.translation.x = 0.0;
-            transform.translation.y = 9.0;
-            transform.translation.z = 0.0;
+            input.reset = true;
         }
     }
 }
 
-fn reset_world(on: On<ResetWorld>) {
-    println!("here");
+fn reset_world(
+    mut input: ResMut<PlayerInput>,
+    mut query: Query<(
+        &Resetable,
+        &mut Transform,
+        &mut LinearVelocity,
+        &mut AngularVelocity,
+    )>,
+) {
+    if input.reset {
+        println!("reset");
+        input.reset = false;
+        for (resetable, mut transform, mut linear_velocity, mut angular_velocity) in &mut query {
+            transform.translation.x = resetable.origin.x;
+            transform.translation.y = resetable.origin.y;
+            transform.translation.z = resetable.origin.z;
+            transform.rotation.x = 0.0;
+            transform.rotation.y = 0.0;
+            transform.rotation.z = 0.0;
+            linear_velocity.x = 0.0;
+            linear_velocity.y = 0.0;
+            linear_velocity.z = 0.0;
+            angular_velocity.x = 0.0;
+            angular_velocity.y = 0.0;
+            angular_velocity.z = 0.0;
+        }
+    }
 }
