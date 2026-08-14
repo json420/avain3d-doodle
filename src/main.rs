@@ -141,12 +141,12 @@ fn update_player(
     mut input: ResMut<PlayerInput>,
     mut query: Query<(
         &Player,
-        &mut Transform,
+        &Transform,
         &mut LinearVelocity,
         &mut AngularVelocity,
     )>,
 ) {
-    for (_player, mut transform, mut linear_velocity, mut angular_velocity) in &mut query {
+    for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
         let dt = time.delta_secs();
         if input.throttle == 0.0 {
             linear_velocity.x *= 0.9;
