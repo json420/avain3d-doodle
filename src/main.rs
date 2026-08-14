@@ -19,6 +19,9 @@ struct PlayerInput {
     jump: bool,
 }
 
+#[derive(Event)]
+struct ResetWorld;
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
@@ -29,6 +32,7 @@ fn main() {
         })
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_input, update_player).chain())
+        .add_observer(reset_world)
         .run();
 }
 
@@ -119,12 +123,12 @@ fn update_player(
     mut input: ResMut<PlayerInput>,
     mut query: Query<(
         &Player,
-        &Transform,
+        &mut Transform,
         &mut LinearVelocity,
         &mut AngularVelocity,
     )>,
 ) {
-    for (_player, transform, mut linear_velocity, mut angular_velocity) in &mut query {
+    for (_player, mut transform, mut linear_velocity, mut angular_velocity) in &mut query {
         let dt = time.delta_secs();
         if input.throttle == 0.0 {
             linear_velocity.x *= 0.9;
@@ -148,5 +152,16 @@ fn update_player(
             input.jump = false; // Clear the jump command
             linear_velocity.y = JUMP_IMPULSE;
         }
+
+        if transform.translation.y < -10.0 {
+            println!("fell off world");
+            transform.translation.x = 0.0;
+            transform.translation.y = 9.0;
+            transform.translation.z = 0.0;
+        }
     }
+}
+
+fn reset_world(on: On<ResetWorld>) {
+    println!("here");
 }
