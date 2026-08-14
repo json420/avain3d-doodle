@@ -57,9 +57,10 @@ fn setup(
 ) {
     commands.spawn((
         RigidBody::Static,
-        Collider::cylinder(200.0, 0.1),
-        Mesh3d(meshes.add(Cylinder::new(200.0, 0.1))),
+        Collider::cylinder(100.0, 1.0),
+        Mesh3d(meshes.add(Cylinder::new(100.0, 1.0))),
         MeshMaterial3d(materials.add(Color::WHITE)),
+        Transform::from_xyz(0.0, -1.0, 0.0),
     ));
 
     let colors = [
@@ -80,7 +81,7 @@ fn setup(
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(colors[k])),
-                    Resetable::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.05, j as f32 * 8.0),
+                    Resetable::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.5, j as f32 * 8.0),
                 ));
             }
         }
@@ -107,7 +108,7 @@ fn setup(
             ColliderDensity(4.0),
             Mesh3d(meshes.add(Cuboid::from_length(USER))),
             MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
-            Resetable::from_xyz(0.0, 13.0, 0.0),
+            Resetable::from_xyz(0.0, 15.0, 0.0),
             LockedAxes::ROTATION_LOCKED,
             MaxLinearSpeed(MAX_LINEAR_SPEED),
             LinearDamping(0.5),
