@@ -59,7 +59,10 @@ fn setup(
         RigidBody::Static,
         Collider::cylinder(100.0, 1.0),
         Mesh3d(meshes.add(Cylinder::new(100.0, 1.0))),
-        MeshMaterial3d(materials.add(Color::WHITE)),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: Color::srgb(0.9, 0.7, 0.9),
+            ..default()
+        })),
         Transform::from_xyz(0.0, -1.0, 0.0),
     ));
 
@@ -80,7 +83,11 @@ fn setup(
                     RigidBody::Dynamic,
                     Collider::cuboid(1.0, 1.0, 1.0),
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
-                    MeshMaterial3d(materials.add(colors[k])),
+                    MeshMaterial3d(materials.add(StandardMaterial {
+                        base_color: colors[k],
+                        alpha_mode: AlphaMode::Add,
+                        ..default()
+                    })),
                     Resetable::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.5, j as f32 * 8.0),
                 ));
             }
