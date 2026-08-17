@@ -85,7 +85,9 @@ fn setup(
                     Mesh3d(meshes.add(Cuboid::from_length(1.0))),
                     MeshMaterial3d(materials.add(StandardMaterial {
                         base_color: colors[k],
-                        alpha_mode: AlphaMode::Add,
+                        //alpha_mode: AlphaMode::Add,
+                        emissive: LinearRgba::from(colors[k]),
+                        emissive_exposure_weight: 0.8,
                         ..default()
                     })),
                     Resetable::from_xyz(i as f32 * 8.0, 1.0 + k as f32 * 1.5, j as f32 * 8.0),
@@ -99,9 +101,11 @@ fn setup(
             commands.spawn((
                 PointLight {
                     shadow_maps_enabled: true,
+                    contact_shadows_enabled: true,
+                    intensity: 7_000_000.0,
                     ..default()
                 },
-                Transform::from_xyz(i as f32 * 30.0, 10.0, j as f32 * 30.0),
+                Transform::from_xyz(i as f32 * 35.0, 11.0, j as f32 * 35.0),
             ));
         }
     }
