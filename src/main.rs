@@ -1,5 +1,10 @@
 use avian3d::prelude::*;
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    window::{
+        PresentMode, PrimaryWindow, VideoModeSelection, WindowMode, WindowPlugin, WindowResized,
+    },
+};
 
 const LINEAR_ACCELERATION: f32 = 30.0; // m/s^2
 const MAX_LINEAR_SPEED: f32 = 30.0; // m/s
@@ -36,6 +41,12 @@ struct PlayerInput {
     reset: bool,
 }
 
+#[derive(Event)]
+struct ToggleCamera;
+
+#[derive(Event)]
+struct ToggleFullscreen;
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PhysicsPlugins::default()))
@@ -47,6 +58,8 @@ fn main() {
         })
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_input, update_player, reset_world).chain())
+        .add_observer(toggle_camera)
+        .add_observer(toggle_fullscreen)
         .run();
 }
 
@@ -132,7 +145,11 @@ fn setup(
         });
 }
 
-fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerInput>) {
+fn keyboard_input(
+    keyboard: Res<ButtonInput<KeyCode>>,
+    mut commands: Commands,
+    mut input: ResMut<PlayerInput>,
+) {
     let up = keyboard.any_pressed([KeyCode::KeyW, KeyCode::ArrowUp]) as i8;
     let down = keyboard.any_pressed([KeyCode::KeyS, KeyCode::ArrowDown]) as i8;
     let left = keyboard.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]) as i8;
@@ -144,6 +161,12 @@ fn keyboard_input(keyboard: Res<ButtonInput<KeyCode>>, mut input: ResMut<PlayerI
     }
     if keyboard.just_pressed(KeyCode::KeyR) {
         input.reset = true;
+    }
+    if keyboard.just_pressed(KeyCode::F5) {
+        commands.trigger(ToggleCamera)
+    }
+    if keyboard.just_pressed(KeyCode::F11) {
+        commands.trigger(ToggleFullscreen)
     }
 }
 
@@ -215,5 +238,23 @@ fn reset_world(
             angular_velocity.y = 0.0;
             angular_velocity.z = 0.0;
         }
+    }
+}
+
+fn toggle_camera(on: On<ToggleCamera>, mut query: Query<(&Camera3d, &mut Transform)>) {
+    for (_camera, mut transform) in &mut query {
+        println!("camera");
+    }
+}
+
+fn toggle_fullscreen(on: On<ToggleFullscreen>, mut query: Query<&mut Window, With<PrimaryWindow>>) {
+    println!("fullscreen");
+    if let Ok(mut window) = query.single_mut() {
+        window.mode = match window.mode {
+            WindowMode::Windowed => {
+                WindowMode::Fullscreen(MonitorSelection::Primary, VideoModeSelection::Current)
+            }
+            _ => WindowMode::Windowed,
+        };
     }
 }
