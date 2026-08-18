@@ -39,6 +39,7 @@ struct PlayerInput {
     steering: f32,
     jump: bool,
     reset: bool,
+    camera_first_person: bool,
 }
 
 #[derive(Event)]
@@ -55,6 +56,7 @@ fn main() {
             steering: 0.0,
             jump: false,
             reset: false,
+            camera_first_person: false,
         })
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_input, update_player, reset_world).chain())
@@ -241,9 +243,21 @@ fn reset_world(
     }
 }
 
-fn toggle_camera(on: On<ToggleCamera>, mut query: Query<(&Camera3d, &mut Transform)>) {
+fn toggle_camera(
+    on: On<ToggleCamera>,
+    mut input: ResMut<PlayerInput>,
+    mut query: Query<(&Camera3d, &mut Transform)>,
+) {
+    input.camera_first_person = !input.camera_first_person;
     for (_camera, mut transform) in &mut query {
-        println!("camera");
+        println!("camera {:?}", input.camera_first_person);
+        if input.camera_first_person {
+            transform.translation.y = 0.0;
+            transform.translation.z = 0.0;
+        } else {
+            transform.translation.y = 3.0;
+            transform.translation.z = 13.0;
+        }
     }
 }
 
