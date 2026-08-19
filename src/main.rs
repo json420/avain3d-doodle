@@ -250,14 +250,11 @@ fn toggle_camera(
 ) {
     input.camera_first_person = !input.camera_first_person;
     for (_camera, mut transform) in &mut query {
-        println!("camera {:?}", input.camera_first_person);
-        if input.camera_first_person {
-            transform.translation.y = 0.0;
-            transform.translation.z = 0.0;
+        *transform = if input.camera_first_person {
+            Transform::from_xyz(0.0, 1.0, 0.0).looking_at(Vec3::new(0.0, 1.0, -1.0), Vec3::Y)
         } else {
-            transform.translation.y = 3.0;
-            transform.translation.z = 13.0;
-        }
+            Transform::from_xyz(0.0, 3.0, 13.0).looking_at(Vec3::ZERO, Vec3::Y)
+        };
     }
 }
 
