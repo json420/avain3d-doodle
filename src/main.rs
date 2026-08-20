@@ -262,9 +262,7 @@ fn toggle_fullscreen(on: On<ToggleFullscreen>, mut query: Query<&mut Window, Wit
     println!("fullscreen");
     if let Ok(mut window) = query.single_mut() {
         window.mode = match window.mode {
-            WindowMode::Windowed => {
-                WindowMode::Fullscreen(MonitorSelection::Primary, VideoModeSelection::Current)
-            }
+            WindowMode::Windowed => WindowMode::BorderlessFullscreen(MonitorSelection::Primary),
             _ => WindowMode::Windowed,
         };
     }
